@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Scratchpad for phone</title>
+  <meta name="theme-color" content="#f8fafc" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#0f172a" media="(prefers-color-scheme: dark)">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="Scratchpad">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600&family=Spline+Sans+Mono:wght@400;500&display=swap"
+    rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: "class",
+      theme: { extend: { fontFamily: { sans: ["Figtree", "system-ui", "sans-serif"], mono: ['"Spline Sans Mono"', "ui-monospace", "Menlo", "monospace"] } } }
+    }
+  </script>
+</head>
+
+<body
+  class="m-0 h-full bg-slate-200 font-sans text-[15px] leading-snug text-slate-900 [-webkit-tap-highlight-color:transparent] dark:bg-slate-950 dark:text-slate-100">
+  <div id="app"
+    class="relative mx-auto flex h-full max-w-[430px] flex-col overflow-hidden bg-slate-50 pb-[env(safe-area-inset-bottom)] pt-[env(safe-area-inset-top)] dark:bg-slate-900">
+    <div id="top" class="flex h-12 shrink-0 items-center pl-2 pr-1.5">
+      <button id="wsb" data-a="ws" aria-label="Choose folder"
+        class="flex h-9 items-center gap-1.5 rounded-full pl-2.5 pr-2 text-sm font-medium text-slate-500 active:bg-slate-200 dark:text-slate-400 dark:active:bg-slate-700"></button>
+      <div class="flex-1"></div>
+      <button id="star" data-a="star" aria-label="Bookmark"
+        class="grid size-11 shrink-0 place-items-center rounded-xl active:bg-slate-200/70 dark:active:bg-slate-700"></button>
+    </div>
+    <div class="flex h-11 shrink-0 border-b border-slate-200 dark:border-slate-700">
+      <div id="tabs"
+        class="flex h-full min-w-0 flex-1 items-stretch gap-6 overflow-x-auto px-5 [-webkit-mask-image:linear-gradient(90deg,transparent,#000_16px,#000_calc(100%_-_28px),transparent)] [mask-image:linear-gradient(90deg,transparent,#000_16px,#000_calc(100%_-_28px),transparent)] [scrollbar-width:none]">
+      </div>
+      <button id="tg" data-a="top" aria-label="Hide top row"
+        class="grid w-10 shrink-0 place-items-center text-slate-500 active:bg-slate-100 dark:text-slate-400 dark:active:bg-slate-700"></button>
+    </div>
+    <div id="bn"
+      class="mx-2.5 mt-2 hidden rounded-xl bg-amber-100 p-3 text-[13.5px] text-amber-900 dark:bg-amber-500/15 dark:text-amber-300">
+    </div>
+    <div id="fd"
+      class="mx-2.5 mt-2 hidden h-11 items-center gap-0.5 rounded-xl border border-slate-200 bg-white pl-3 pr-0.5 dark:border-slate-700 dark:bg-slate-800">
+      <input id="fi" placeholder="Find in this tab" autocomplete="off"
+        class="min-w-0 flex-1 bg-transparent outline-none placeholder:text-slate-400">
+      <span id="fc" class="px-1 text-xs text-slate-500 dark:text-slate-400"></span>
+      <button data-a="fp" aria-label="Previous"
+        class="grid size-9 place-items-center rounded-lg text-slate-500 active:bg-slate-100 dark:text-slate-400 dark:active:bg-slate-700"></button>
+      <button data-a="fn" aria-label="Next"
+        class="grid size-9 place-items-center rounded-lg text-slate-500 active:bg-slate-100 dark:text-slate-400 dark:active:bg-slate-700"></button>
+      <button data-a="rpt" aria-label="Replace" class="grid size-9 place-items-center rounded-lg text-slate-500 active:bg-slate-100 dark:text-slate-400 dark:active:bg-slate-700"></button>
+      <button data-a="find" aria-label="Close find"
+        class="grid size-9 place-items-center rounded-lg text-slate-500 active:bg-slate-100 dark:text-slate-400 dark:active:bg-slate-700"></button>
+    </div>
+    <div id="rp"
+      class="mx-2.5 mt-1.5 hidden h-11 items-center gap-1 rounded-xl border border-slate-200 bg-white pl-3 pr-1 dark:border-slate-700 dark:bg-slate-800">
+      <input id="ri" placeholder="Replace with" autocomplete="off"
+        class="min-w-0 flex-1 bg-transparent outline-none placeholder:text-slate-400">
+      <button data-a="rp1" class="h-8 rounded-lg px-3 text-[13px] font-medium text-blue-600 active:bg-slate-100 dark:text-blue-400 dark:active:bg-slate-700">Replace</button>
+      <button data-a="rpa" class="h-8 rounded-lg px-3 text-[13px] font-medium text-blue-600 active:bg-slate-100 dark:text-blue-400 dark:active:bg-slate-700">All</button>
+    </div>
+    <div id="ed" class="group relative mt-1 min-h-0 flex-1">
+      <div
+        class="pointer-events-none absolute inset-y-0 left-[calc(var(--gw,50px)_-_10px)] z-10 hidden w-px bg-slate-300 group-[.nums]:block dark:bg-slate-600">
+      </div>
+      <div id="hl"
+        class="pointer-events-none absolute inset-0 m-0 overflow-hidden whitespace-pre-wrap pb-11 pl-[18px] pr-[18px] pt-3 font-mono text-[length:var(--fs,17px)] leading-[1.6] text-transparent [overflow-wrap:anywhere] group-[.nums]:pl-[var(--gw,50px)] group-[.nw]:whitespace-pre group-[.nw]:[overflow-wrap:normal]">
+      </div>
+      <textarea id="ta" placeholder="Start typing. It saves itself." spellcheck="true" aria-label="Note"
+        class="absolute inset-0 m-0 h-full w-full resize-none overflow-auto whitespace-pre-wrap border-0 bg-transparent pb-11 pl-[18px] pr-[18px] pt-3 font-mono text-[length:var(--fs,17px)] leading-[1.6] text-slate-900 caret-blue-600 outline-none [overflow-wrap:anywhere] [scrollbar-width:none] placeholder:text-slate-400 group-[.nums]:pl-[var(--gw,50px)] group-[.nw]:whitespace-pre group-[.nw]:[overflow-wrap:normal] [&[readonly]]:opacity-50 dark:text-slate-100 dark:caret-blue-400"></textarea>
+      <div id="ct"
+        class="pointer-events-none absolute bottom-2 right-3.5 rounded-full bg-slate-50 px-2.5 py-0.5 text-xs text-slate-500 dark:bg-slate-900 dark:text-slate-400">
+      </div>
+    </div>
+    <div id="tb"
+      class="flex h-[58px] shrink-0 items-center justify-around border-t border-slate-200 bg-white dark:border-slate-700 dark:bg-slate-800">
+      <button data-a="find" aria-label="Find"
+        class="grid h-[46px] w-[58px] place-items-center rounded-xl text-slate-500 active:bg-slate-100 dark:text-slate-400 dark:active:bg-slate-700"></button>
+      <button data-a="new" aria-label="New tab"
+        class="grid h-[46px] w-[58px] place-items-center rounded-xl text-slate-500 active:bg-slate-100 dark:text-slate-400 dark:active:bg-slate-700"></button>
+      <button data-a="grid" aria-label="All tabs"
+        class="grid h-[46px] w-[58px] place-items-center rounded-xl text-slate-500 active:bg-slate-100 dark:text-slate-400 dark:active:bg-slate-700"><span
+          id="gc"
+          class="grid size-[22px] place-items-center rounded-md border-2 border-current text-[11px] font-bold leading-none"></span></button>
+      <button data-a="hist" aria-label="History"
+        class="grid h-[46px] w-[58px] place-items-center rounded-xl text-slate-500 active:bg-slate-100 dark:text-slate-400 dark:active:bg-slate-700"></button>
+      <button data-a="menu" aria-label="Menu"
+        class="grid h-[46px] w-[58px] place-items-center rounded-xl text-slate-500 active:bg-slate-100 dark:text-slate-400 dark:active:bg-slate-700"></button>
+    </div>
+    <div id="sw"
+      class="absolute inset-0 z-20 hidden flex-col bg-slate-50 pt-[env(safe-area-inset-top)] dark:bg-slate-900"></div>
+    <div id="sh" class="absolute inset-0 z-30 hidden items-end bg-black/40">
+      <div id="sheet"
+        class="max-h-[82%] w-full overflow-y-auto rounded-t-3xl bg-white px-2 pb-6 pt-2 shadow-2xl dark:bg-slate-800">
+      </div>
+    </div>
+    <div id="ts" role="status" aria-live="polite"
+      class="pointer-events-none absolute inset-x-0 bottom-20 z-50 mx-auto w-fit max-w-[85%] rounded-full bg-slate-900 px-4 py-2.5 text-sm text-white opacity-0 shadow-lg transition-opacity dark:bg-slate-100 dark:text-slate-900">
+    </div>
+    <div id="ob"
+      class="absolute inset-0 z-40 hidden flex-col justify-center gap-4 bg-slate-50 p-7 dark:bg-slate-900">
+      <h1 class="m-0 text-2xl font-semibold">Where should your notes live?</h1>
+      <p class="m-0 text-slate-500 dark:text-slate-400">Every tab is a plain .txt file in a folder you choose. Nothing
+        leaves your phone.</p>
+      <div id="pk"
+        class="flex items-center gap-3 rounded-2xl border border-slate-200 bg-white p-4 text-blue-600 dark:border-slate-700 dark:bg-slate-800 dark:text-blue-400">
+        <div class="text-slate-900 dark:text-slate-100"><b>Documents/Scratchpad</b><small
+            class="block text-xs text-slate-500 dark:text-slate-400">Suggested folder</small></div>
+      </div>
+      <button data-a="obok"
+        class="rounded-xl bg-blue-600 py-3.5 font-medium text-white active:bg-blue-700">Use this folder</button>
+      <button data-a="obalt" class="rounded-xl py-3 font-medium text-blue-600 dark:text-blue-400">Choose another
+        folder…</button>
+    </div>
+  </div>
+  <script>
+    const $ = s => document.querySelector(s), ta = $("#ta");
+    // shared utility strings (Tailwind classes)
+    const IB = "grid size-11 shrink-0 place-items-center rounded-xl text-slate-500 active:bg-slate-200/70 dark:text-slate-400 dark:active:bg-slate-700",
+      IBS = "grid size-9 shrink-0 place-items-center rounded-lg text-slate-500 active:bg-slate-100 dark:text-slate-400 dark:active:bg-slate-700",
+      RW = "flex w-full items-center gap-3 rounded-xl px-3 py-3 text-left active:bg-slate-100 dark:active:bg-slate-700",
+      SM = "block text-xs font-normal text-slate-500 dark:text-slate-400",
+      CAP = "px-3 py-2 text-xs text-slate-500 dark:text-slate-400",
+      H3 = "px-3 py-2 text-base font-semibold",
+      PILL = "rounded-full bg-slate-100 px-3 py-1.5 text-[13px] font-medium active:bg-slate-200 dark:bg-slate-700 dark:active:bg-slate-600",
+      INP = "min-w-0 flex-1 rounded-xl border border-slate-200 bg-white px-3 py-2.5 outline-none focus:border-blue-500 dark:border-slate-600 dark:bg-slate-900 dark:focus:border-blue-400",
+      PB = "mx-3 mt-3 w-[calc(100%_-_1.5rem)] rounded-xl bg-blue-600 py-3 font-medium text-white active:bg-blue-700",
+      SEG = "flex rounded-xl bg-slate-100 p-1 dark:bg-slate-700",
+      segB = on => "flex-1 rounded-lg py-2 text-sm font-medium " + (on ? "bg-white text-slate-900 shadow dark:bg-slate-600 dark:text-white" : "text-slate-500 dark:text-slate-400"),
+      TAB = "tab relative flex max-w-[150px] flex-none select-none items-center gap-1.5 px-0.5 text-[14.5px] ",
+      TON = "on font-medium text-slate-900 after:absolute after:inset-x-0 after:bottom-0 after:h-[2.5px] after:rounded-t-sm after:bg-blue-600 dark:text-slate-100 dark:after:bg-blue-400",
+      TOFF = "text-slate-500 dark:text-slate-400";
+    const P = {
+      home: '<path d="M4 11l8-7 8 7"/><path d="M6 10v10h12V10"/>', swap: '<path d="M7 7h11l-3-3M17 17H6l3 3"/>', history: '<path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/><path d="M12 7v5l3 2"/>', fold: '<path d="M3 7h6l2 2h10v10H3z"/>', find: '<circle cx="11" cy="11" r="6"/><path d="M16 16l4 4"/>', more: '<circle cx="5" cy="12" r="1.2"/><circle cx="12" cy="12" r="1.2"/><circle cx="19" cy="12" r="1.2"/>', plus: '<path d="M12 5v14M5 12h14"/>', chev: '<path d="M7 10l5 5 5-5"/>', back: '<path d="M15 6l-6 6 6 6"/>', copy: '<rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V6a2 2 0 00-2-2H6a2 2 0 00-2 2v8a2 2 0 002 2h2"/>', tabs: '<rect x="4" y="5" width="16" height="14" rx="3"/><path d="M4 9.5h16"/>', star: '<path d="M12 3.5l2.6 5.4 5.9.8-4.3 4.1 1 5.9L12 16.9l-5.2 2.8 1-5.9L3.5 9.7l5.9-.8z"/>', edit: '<path d="M4 20h4L19 9l-4-4L4 16z"/>', x: '<path d="M6 6l12 12M18 6L6 18"/>', up: '<path d="M6 14l6-6 6 6"/>', dn: '<path d="M6 10l6 6 6-6"/>', chk: '<path d="M5 12l5 5 9-10"/>', list: '<path d="M9 6h11M9 12h11M9 18h11M4.5 6h.01M4.5 12h.01M4.5 18h.01"/>'
+    };
+    const ic = (n, c = "size-[22px] stroke-[1.8]") => `<svg viewBox="0 0 24 24" class="${c} shrink-0 fill-none stroke-current [stroke-linecap:round] [stroke-linejoin:round]">${P[n]}</svg>`,
+      esc = t => t.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/"/g, "&quot;");
+    document.querySelectorAll("[data-a]").forEach(b => { const m = { menu: "more", fp: "up", fn: "dn", find: b.closest("#fd") ? "x" : "find", star: "star", new: "plus", hist: "history", rpt: "swap" }[b.dataset.a]; if (m) b.innerHTML = ic(m) });
+    $("#pk").insertAdjacentHTML("afterbegin", ic("fold"));
+    const F = [{ n: "Scratchpad", p: "Documents/Scratchpad", ok: 1, c: "blue" }, { n: "trailmap", p: "Projects/trailmap", ok: 1, c: "green" }, { n: "Backup drive", p: "/Volumes/Backup", ok: 0, c: "grey" }];
+    // folder color name -> Tailwind palette
+    const COL = { grey: "slate", blue: "blue", red: "red", yellow: "amber", green: "green", pink: "pink", purple: "purple", cyan: "cyan", orange: "orange" };
+    const cl = f => COL[f.c || "grey"], dot = f => `bg-${cl(f)}-500`, tx = f => `text-${cl(f)}-600 dark:text-${cl(f)}-400`,
+      pill = f => `bg-${cl(f)}-100 text-${cl(f)}-800 dark:bg-${cl(f)}-500/20 dark:text-${cl(f)}-300`;
+    const seed = () => ({ tabs: [{ t: "Grocery list\n\n- oat milk\n- lemons\n- good bread\n- something for Sunday\n", f: 0 }, { t: "Call with Mara\nThursday, 3pm\n\nAsk about the trail permits.\nSend the revised map before the call.\n", f: 0, b: "rec" }, { t: "Before launch\n\n- fix the offline tiles\n- rename Peak view\n- check the privacy page\n", f: 1 }, { t: "Tax receipts 2026\n\nStorage unit: 140\nCamera repair: 86.50\n", f: 2 }], cur: 0, fs: 17, theme: "auto", ob: 0 });
+    let S; try { S = JSON.parse(localStorage.getItem("sp-m1")) } catch (e) { }
+    if (!S || !S.tabs) S = seed();
+    if (S.F) F.splice(0, F.length, ...S.F); S.F = F;
+    S.tabs.forEach(x => { if (!F[x.f]) x.f = 0 }); S.cur = Math.min(Math.max(+S.cur || 0, 0), S.tabs.length - 1);
+    S.closed = S.closed || [{ t: "Packing list\n\n- passport\n- charger\n- rain jacket\n", f: 0, d: "Yesterday" }, { t: "Book ideas\nA field guide to small stations.\nThe lost ferry timetable.\n", f: 0, d: "Mon" }, { t: "Meeting notes, 12 Oct\n\nDecide on pricing.\nOwner for the map update?\n", f: 0, d: "12 Oct" }, { t: "Release notes draft\n\n- offline tiles\n- faster search\n", f: 1, d: "Fri" }, { t: "Old passwords reminder\nMove them to the manager.\n", f: 2, d: "Sep" }];
+    const keep = () => { try { localStorage.setItem("sp-m1", JSON.stringify(S)) } catch (e) { } };
+    const cur = () => S.tabs[S.cur];
+    // hash routes: #/note/<id>  #/tabs  #/folders  #/folders/<n>  #/starred
+    const app = $("#app"), RT = { tabs: "t", folders: "g", starred: "s" };
+    const tid = x => x.id || (x.id = Math.random().toString(36).slice(2, 8));
+    const sH = () => { if (app.classList.contains("insw")) return; const h = "#/note/" + tid(cur()); if (location.hash !== h) history.replaceState(null, "", h) };
+    const go = h => location.hash === h ? render() : (location.hash = h);
+    const swv = on => { app.classList.toggle("insw", on); $("#sw").classList.toggle("hidden", !on); $("#sw").classList.toggle("flex", on) };
+    function render() {
+      const [r, p] = location.hash.replace(/^#\/?/, "").split("/"); close();
+      if (RT[r]) { OG = r === "folders" && F[+p] ? +p : -1; OM = OG >= 0 ? "t" : RT[r]; OQ = ""; ovS() }
+      else { const i = S.tabs.findIndex(x => x.id === p); if (r === "note" && i >= 0) S.cur = i; swv(false); show(true) }
+    }
+    const T = t => t.n || ((t.t.split("\n").find(x => x.trim()) || "").trim().slice(0, 26) || "Untitled " + (S.tabs.indexOf(t) + 1));
+    const fileOf = t => T(t).toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") + ".txt";
+    function applyTop() { $("#top").classList.toggle("hidden", !!S.top); const g = $("#tg"); g.innerHTML = ic(S.top ? "dn" : "up"); g.setAttribute("aria-label", S.top ? "Show top row" : "Hide top row") }
+    function theme() { const d = S.theme === "dark" || (S.theme === "auto" && matchMedia("(prefers-color-scheme:dark)").matches); document.documentElement.classList.toggle("dark", d) }
+    function toast(m) { const t = $("#ts"); t.textContent = m; t.classList.replace("opacity-0", "opacity-100"); clearTimeout(toast.t); toast.t = setTimeout(() => t.classList.replace("opacity-100", "opacity-0"), 2200) }
+    function banner(b, t) {
+      const f = F[t.f], B = { changed: ["File changed on disk", `Another app edited ${fileOf(t)}. Typing is paused until you choose.`, [["over", "Overwrite"], ["fetch", "Fetch changes"], ["later", "Cancel"]]], min: ["", "File changed on disk. Typing is paused.", [["review", "Review"]]], gone: ["File no longer exists", "Save to re-create it, or save a copy somewhere else.", [["save", "Save"], ["copy", "Save as…"]]], lock: ["Can’t save", "The file is locked or read-only. Your text is safe here.", [["copy", "Save as copy"]]], rec: ["", "Some changes were unsaved in your last session.", [["dismiss", "Got it"]]], off: ["Folder unavailable", `${f.n} isn’t connected. Edits are kept here and save when it returns.`, []] }[b], el = $("#bn");
+      el.style.display = B ? "block" : "none"; if (B) el.innerHTML = (B[0] ? `<b class="block font-semibold">${B[0]}</b>` : "") + `<div>${B[1]}</div>` + (B[2].length ? `<div class="mt-2 flex flex-wrap gap-1.5">${B[2].map(x => `<button class="h-9 rounded-lg bg-white px-3.5 text-[13.5px] font-medium text-slate-900 dark:bg-slate-800 dark:text-slate-100" data-a="bn" data-v="${x[0]}">${x[1]}</button>`).join("")}</div>` : "")
+    }
+    const N0 = 0; // first line number is N0 + 1
+    let Q = "", qi = 0, M = [];
+    function sync() { $("#hl").scrollTop = ta.scrollTop; $("#hl").scrollLeft = ta.scrollLeft }
+    // line numbers: ::before reads data-n, sits in the left padding when #ed has .nums
+    const LN = "l relative before:absolute before:right-full before:whitespace-nowrap before:top-[.08em] before:mr-4 before:hidden before:text-[.82em] before:tabular-nums before:text-slate-400 before:content-[attr(data-n)] group-[.nums]:before:block dark:before:text-slate-500";
+    function mirror(j) {
+      const t = cur().t; if (!Q) { M = []; $("#fc").textContent = "" }
+      const lo = t.toLowerCase(), q = Q.toLowerCase(); M = []; let i = -1; while (q && (i = lo.indexOf(q, i + 1)) >= 0) M.push(i); if (qi >= M.length) qi = 0;
+      let o = "", off = 0; t.split("\n").forEach((ln, n) => { let s = "", p = off; M.forEach((m, k) => { if (m >= off && m + q.length <= off + ln.length) { s += esc(t.slice(p, m)) + `<mark class="${k === qi ? "c bg-orange-300 dark:bg-orange-600/70" : "bg-yellow-200 dark:bg-yellow-700/60"} rounded-[3px] text-transparent">${esc(t.slice(m, m + q.length))}</mark>`; p = m + q.length } }); s += esc(t.slice(p, off + ln.length)); o += `<div class="${LN}" data-n="${N0 + n + 1}">${s || "&#8203;"}</div>`; off += ln.length + 1 });
+      $("#hl").innerHTML = o; $("#fc").textContent = Q ? (M.length ? `${qi + 1}/${M.length}` : "0") : "";
+      const c = $("#hl .c"); if (j && c) ta.scrollTop = Math.max(0, c.closest(".l").offsetTop + c.offsetTop - 90); sync()
+    }
+    function show(reset) {
+      const t = cur(), b = F[t.f].ok ? t.b : "off"; if (reset) ta.value = t.t;
+      ta.readOnly = b === "changed" || b === "min"; $("#ed").classList.toggle("nw", S.wrap === false); $("#ed").classList.toggle("nums", !!S.ln); ta.wrap = S.wrap === false ? "off" : "soft"; document.documentElement.style.setProperty("--fs", S.fs + "px"); $("#ed").style.setProperty("--gw", Math.round(24 + Math.max(3, String(N0 + t.t.split(/\r?\n/).length).length) * .5 * S.fs) + "px");
+      $("#wsb").innerHTML = ic("fold", "size-[18px] stroke-[1.8] " + tx(F[t.f])) + `<span>${esc(F[t.f].n)}</span>` + ic("chev", "size-[18px] stroke-[1.8]");
+      $("#tabs").innerHTML = S.tabs.map((x, i) => `<button class="${TAB}${i === S.cur ? TON : TOFF}" data-a="tab" data-i="${i}"><span class="size-2 shrink-0 rounded-full ${dot(F[x.f])}"></span><span class="min-w-0 truncate py-1 leading-normal">${esc(T(x))}</span></button>`).join("");
+      const a = $("#tabs .on"); if (a) $("#tabs").scrollLeft = a.offsetLeft - 70;
+      banner(b, t); const w = t.t.trim() ? t.t.trim().split(/\s+/).length : 0;
+      $("#ct").textContent = `${w} words, ${t.t.length} characters`; $("#gc").textContent = S.tabs.length;
+      $("#star").className = "grid size-11 shrink-0 place-items-center rounded-xl active:bg-slate-200/70 dark:active:bg-slate-700 " + (t.s ? "text-amber-500" : "text-slate-500 dark:text-slate-400");
+      $("#star svg").classList.toggle("fill-current", !!t.s); sH(); mirror(); keep()
+    }
+    ta.oninput = () => { cur().t = ta.value; show() }; ta.onscroll = sync;
+    function sheet(h) { $("#sheet").innerHTML = '<div class="mx-auto mb-2 h-1 w-9 rounded-full bg-slate-300 dark:bg-slate-600"></div>' + h; $("#sh").classList.replace("hidden", "flex") }
+    const close = () => $("#sh").classList.replace("flex", "hidden");
+    let OM = "t", OQ = "", OG = -1;
+    function ovS() {
+      swv(true); const md = OG >= 0 ? "g" : OM;
+      const seg = (m, i, l) => `<button class="grid h-9 w-14 place-items-center rounded-full ${md === m ? "bg-white text-slate-900 shadow dark:bg-slate-600 dark:text-white" : "text-slate-500 dark:text-slate-400"}" data-a="om" data-v="${m}" aria-label="${l}">${ic(i)}</button>`;
+      $("#sw").innerHTML = (OG >= 0
+        ? `<div class="flex items-center gap-1 px-2 pt-2"><button class="${IB}" data-a="om" data-v="g" aria-label="Back to folders">${ic("back")}</button><span class="text-slate-500 dark:text-slate-400">Folders /</span><span class="pointer-events-none ml-1 rounded-full px-3 py-1 text-sm font-medium ${pill(F[OG])}">${esc(F[OG].n)}</span></div>`
+        : `<div class="flex items-center px-2 pt-2"><button class="${IB}" data-a="swx" aria-label="Back to note">${ic("back")}</button></div>`) + `
+<div class="px-3.5 pb-1 pt-2"><input id="oq" class="w-full rounded-xl bg-slate-100 px-3.5 py-2.5 outline-none placeholder:text-slate-400 dark:bg-slate-800" placeholder="${{ t: "Search your tabs", g: "Search folders", s: "Search bookmarks" }[OM]}" value="${esc(OQ)}"></div><div id="ol" class="min-h-0 flex-1 overflow-y-auto pb-24"></div>${OG >= 0 ? `<button data-a="new" class="absolute bottom-5 right-5 mb-[env(safe-area-inset-bottom)] flex items-center gap-2 rounded-2xl bg-blue-600 py-3.5 pl-4 pr-5 font-medium text-white shadow-lg active:bg-blue-700">${ic("plus")}New tab</button>` : `<div class="flex shrink-0 items-center justify-between border-t border-slate-200 bg-white px-2 py-2 dark:border-slate-700 dark:bg-slate-800"><button class="${IB}" data-a="swx" aria-label="Home">${ic("home")}</button><div class="flex rounded-full bg-slate-100 p-1 dark:bg-slate-700">${seg("t", "tabs", "Open tabs")}${seg("g", "fold", "Folders")}${seg("s", "star", "Bookmarks")}</div><button class="${IB}" data-a="new" aria-label="New tab">${ic("plus")}</button></div>`}`;
+      $("#oq").oninput = e => { OQ = e.target.value; ovL() }; ovL()
+    }
+    function ovL() {
+      const q = OQ.toLowerCase();
+      if (OM !== "g") {
+        const card = (x, i) => `<div class="cd relative flex aspect-[4/3] select-none flex-col justify-between rounded-2xl border bg-white p-3.5 text-left active:bg-slate-50 dark:bg-slate-800 dark:active:bg-slate-700 ${i === S.cur ? "border-blue-500 ring-1 ring-blue-500 dark:border-blue-400 dark:ring-blue-400" : "border-slate-200 dark:border-slate-700"}" data-a="ovo" data-i="${i}" role="button"><b class="line-clamp-3 pr-7 text-base font-medium leading-snug [overflow-wrap:anywhere]">${esc(T(x))}</b><small class="flex items-center gap-2 text-[13px] text-slate-500 dark:text-slate-400"><span class="size-2.5 shrink-0 rounded-full ${dot(F[x.f])}"></span><span class="truncate">${esc(F[x.f].n)}</span></small><button class="x absolute right-1.5 top-1.5 grid size-9 place-items-center rounded-lg text-slate-400 active:bg-slate-100 dark:active:bg-slate-700" data-a="ovx" data-i="${i}" aria-label="Close tab">${ic("x", "size-[16px] stroke-[1.8]")}</button></div>`;
+        const rows = S.tabs.map((x, i) => [x, i]).filter(r => (OG < 0 || r[0].f === OG) && (OM !== "s" || r[0].s) && (!q || (T(r[0]) + r[0].t).toLowerCase().includes(q)));
+        $("#ol").innerHTML = `<div class="${CAP} !px-3.5">${rows.length} ${rows.length === 1 ? "tab" : "tabs"}</div>` +
+          (rows.length ? `<div class="grid grid-cols-2 gap-3 px-3.5">${rows.map(r => card(r[0], r[1])).join("")}</div>` : `<div class="${CAP} !px-3.5">${OM === "s" && !q ? "No bookmarks yet. Tap the star to bookmark a tab." : "No tabs found."}</div>`)
+      } else {
+        const rows = F.map((f, i) => [f, i]).filter(r => !q || r[0].n.toLowerCase().includes(q));
+        $("#ol").innerHTML = `<div class="${CAP} !px-3.5">${rows.length} ${rows.length === 1 ? "folder" : "folders"}</div><div class="px-1.5">` + rows.map(([f, i]) => {
+          const n = S.tabs.filter(x => x.f === i).length;
+          return `<div class="flex items-center"><button class="${RW} ${f.ok ? "" : "opacity-50"}" data-a="og" data-i="${i}"><span class="grid size-10 shrink-0 place-items-center rounded-xl ${pill(f)}">${ic("fold")}</span><span class="min-w-0 flex-1"><b class="font-medium">${esc(f.n)}</b><small class="${SM} truncate">${n} ${n === 1 ? "tab" : "tabs"} open · ${esc(f.p)}</small></span></button><button class="${IB}" data-a="fe" data-i="${i}" aria-label="Edit folder">${ic("edit")}</button></div>`
+        }).join("") + `<button class="${RW} text-blue-600 dark:text-blue-400" data-a="nf">${ic("plus")}New folder</button></div>`
+      }
+    }
+    function wsS() { const t = cur(); sheet(`<h3 class="${H3}">Save this tab in</h3>${F.map((f, i) => `<div class="flex items-center"><button class="${RW} ${f.ok ? "" : "opacity-50"}" data-a="mv" data-i="${i}"><span class="${tx(f)}">${ic("fold")}</span><span class="flex-1">${esc(f.n)}<small class="${SM}">${f.ok ? esc(f.p) : "Not connected"}</small></span>${i === t.f ? ic("chk") : ""}</button>${f.ok ? `<button class="${PILL} shrink-0" data-a="nt" data-i="${i}">New tab here</button>` : ""}</div>`).join("")}<button class="${RW} text-blue-600 dark:text-blue-400" data-a="nf" data-v="mv">${ic("plus")}New folder…</button><div class="${CAP}">Closing a tab never deletes its file.</div>`) }
+    function menuS() {
+      const t = cur(); sheet(`<h3 class="${H3} pb-0">${esc(T(t))}</h3><div class="${CAP} pt-0">${esc(F[t.f].n)}/${fileOf(t)}</div>
+<div class="flex gap-2 px-3 py-2"><input id="rn" class="${INP}" placeholder="Rename file"><button class="${PILL}" data-a="ren">Rename</button></div>
+<button class="${RW}" data-a="set"><span class="flex-1">Display settings<small class="${SM}">Text size, word wrap, line numbers, theme</small></span></button>
+<button class="${RW} text-red-600 dark:text-red-400" data-a="del">Move file to Trash</button>`)
+    }
+    function setS() {
+      sheet(`<h3 class="${H3}">Display settings</h3>
+<div class="${RW}"><span class="flex-1">Text size</span><button class="${PILL}" data-a="fs" data-d="-1">A−</button><b class="w-6 text-center">${S.fs}</b><button class="${PILL}" data-a="fs" data-d="1">A+</button></div>
+${[["wrap", "Word wrap", S.wrap !== false], ["ln", "Line numbers", !!S.ln]].map(x => `<button class="${RW}" role="checkbox" aria-checked="${x[2]}" data-a="tg" data-v="${x[0]}"><span class="flex-1">${x[1]}</span><span class="grid size-5 place-items-center rounded-md border-2 text-white ${x[2] ? "border-blue-600 bg-blue-600" : "border-slate-300 dark:border-slate-500"}">${x[2] ? ic("chk", "size-[14px] stroke-[3]") : ""}</span></button>`).join("")}<div class="px-3 py-1.5"><div class="${SEG}">${["auto", "light", "dark"].map(k => `<button class="${segB(S.theme === k)}" data-a="th" data-v="${k}">${k[0].toUpperCase() + k.slice(1)}</button>`).join("")}</div></div>`)
+    }
+    let SC = "blue";
+    function fSheet(fi, mv) {
+      const f = fi >= 0 ? F[fi] : null; SC = f ? f.c : "blue";
+      sheet(`<h3 class="${H3}">${f ? "Edit folder" : "New folder"}</h3><div class="flex px-3 py-1.5"><input id="fn" class="${INP}" placeholder="Folder name" value="${f ? esc(f.n) : ""}"></div>
+<div class="flex flex-wrap gap-3 px-3 py-3">${Object.keys(COL).map(k => `<button class="swc grid size-9 place-items-center rounded-full text-white bg-${COL[k]}-500" data-a="pc" data-v="${k}" aria-label="${k}">${k === SC ? ic("chk", "size-[17px] stroke-[3]") : ""}</button>`).join("")}</div>
+<button class="${PB}" data-a="fsave" data-i="${fi}" data-v="${mv ? "mv" : ""}">${f ? "Save" : "Create folder"}</button>`)
+    }
+    function histS() {
+      sheet(`<h3 class="${H3}">History</h3>` + (S.closed.length ? `<button class="${RW} justify-center font-medium text-red-600 dark:text-red-400" data-a="hclr">Clear all</button>` + S.closed.map((x, i) => `<div class="flex items-center rounded-xl active:bg-slate-100 dark:active:bg-slate-700"><button class="flex min-w-0 flex-1 items-center gap-3 px-3 py-3 text-left" data-a="hopen" data-i="${i}"><span class="min-w-0 flex-1"><b class="block truncate font-medium">${esc(T(x))}</b><small class="${SM}">${esc(F[x.f].n)}</small></span><span class="text-xs text-slate-400">${x.d || ""}</span></button><button class="${IBS} mr-1" data-a="hdel" data-i="${i}" aria-label="Remove">${ic("x", "size-[18px] stroke-[1.8]")}</button></div>`).join("") : `<div class="${CAP}">No closed tabs yet.</div>`))
+    }
+    function add(f) { S.tabs.push({ t: "", f: f == null ? cur().f : f }); S.cur = S.tabs.length - 1; close(); swv(false); show(true); ta.focus() }
+    const afterTabs = () => app.classList.contains("insw") ? (show(true), ovS()) : show(true);
+    function closeT(i) {
+      const x = S.tabs[i], nm = fileOf(x), fo = F[x.f].n; S.tabs.splice(i, 1); if (x.t.trim()) S.closed.unshift({ t: x.t, f: x.f, n: x.n, d: "Just now" });
+      if (!S.tabs.length) S.tabs.push({ t: "", f: 0 }); if (i <= S.cur && S.cur > 0) S.cur--;
+      close(); afterTabs(); toast(`Closed. ${nm} stays in ${fo}.`)
+    }
+    function closeMany(keepIdx) {
+      const k = S.tabs[keepIdx]; S.tabs.forEach(x => { if (x !== k && x.t.trim()) S.closed.unshift({ t: x.t, f: x.f, n: x.n, d: "Just now" }) });
+      S.tabs = k ? [k] : [{ t: "", f: 0 }]; S.cur = 0; close(); afterTabs(); toast(k ? "Closed other tabs" : "Closed all tabs")
+    }
+    function tabS(i) {
+      const x = S.tabs[i], f = F[x.f];
+      sheet(`<h3 class="${H3} pb-0">${esc(T(x))}</h3><div class="${CAP} pt-0">${esc(f.n)}/${fileOf(x)}</div>
+<div class="flex gap-2 px-3 py-2"><input id="rn" class="${INP}" placeholder="Rename tab" value="${esc(x.n || "")}"><button class="${PILL}" data-a="trn" data-i="${i}">Rename</button></div>
+<button class="${RW}" data-a="tstar" data-i="${i}">${ic("star")}<span class="flex-1">${x.s ? "Remove bookmark" : "Bookmark"}</span></button>
+<button class="${RW}" data-a="tmv" data-i="${i}">${ic("fold")}<span class="flex-1">Move to folder<small class="${SM}">${esc(f.n)}</small></span>${ic("chev").replace("M7 10l5 5 5-5", "M9 6l6 6-6 6")}</button>
+<button class="${RW}" data-a="tdup" data-i="${i}">${ic("copy")}<span>Duplicate</span></button>
+<button class="${RW}" data-a="tcopy" data-i="${i}">${ic("list")}<span>Copy text</span></button>
+<button class="${RW}" data-a="tcl" data-i="${i}">${ic("x")}<span>Close tab</span></button>
+${S.tabs.length > 1 ? `<button class="${RW}" data-a="tco" data-i="${i}">${ic("tabs")}<span>Close other tabs</span></button>` : ""}
+<button class="${RW} text-red-600 dark:text-red-400" data-a="tca">${ic("x")}<span>Close all tabs</span></button>`)
+    }
+    function tmvS(i) {
+      const x = S.tabs[i];
+      sheet(`<h3 class="${H3}">Move to folder</h3>${F.map((f, k) => `<button class="${RW} ${f.ok ? "" : "opacity-50"}" data-a="tf" data-i="${i}" data-v="${k}"><span class="grid size-10 shrink-0 place-items-center rounded-xl ${pill(f)}">${ic("fold")}</span><span class="flex-1">${esc(f.n)}<small class="${SM}">${f.ok ? esc(f.p) : "Not connected"}</small></span>${k === x.f ? ic("chk") : ""}</button>`).join("")}`)
+    }
+    function fnd() { const d = $("#fd"); const on = d.style.display !== "flex"; d.style.display = on ? "flex" : "none"; if (on) $("#fi").focus(); else { Q = ""; $("#fi").value = ""; $("#rp").style.display = "none"; mirror() } }
+    $("#fi").oninput = e => { Q = e.target.value; qi = 0; mirror(true) };
+    const step = d => { if (M.length) { qi = (qi + d + M.length) % M.length; mirror(true) } };
+    $("#tb").onmousedown = e => e.preventDefault();
+    const BN = { over: () => toast("Your text replaced the file"), fetch: () => { cur().t = cur().t.trimEnd() + "\n- added from another app\n"; toast("Loaded the version from disk") }, later: () => { cur().b = "min"; return 1 }, review: () => { cur().b = "changed"; return 1 }, save: () => toast("File re-created"), copy: () => toast("Saved a copy"), dismiss: () => 0 };
+    document.addEventListener("click", e => {
+      if (lpSup) { lpSup = false; return }
+      const b = e.target.closest("[data-a]"); if (!b) { if (e.target.id === "sh") close(); return }
+      const a = b.dataset.a, i = +b.dataset.i, v = b.dataset.v, t = cur();
+      const A = {
+        tab: () => { S.cur = i; show(true) }, new: () => add(app.classList.contains("insw") && OG >= 0 ? OG : null), hist: histS, hclr: () => { S.closed = []; keep(); histS() }, hdel: () => { S.closed.splice(i, 1); keep(); histS() }, hopen: () => { const d = S.closed.splice(i, 1)[0]; S.tabs.push({ t: d.t, f: d.f, n: d.n }); S.cur = S.tabs.length - 1; close(); show(true) }, grid: () => go("#/tabs"), ws: wsS, menu: menuS, set: setS, find: fnd, fp: () => step(-1), fn: () => step(1),
+        rpt: () => { const r = $("#rp"); r.style.display = r.style.display === "flex" ? "none" : "flex"; if (r.style.display === "flex") $("#ri").focus() },
+        rp1: () => { if (ta.readOnly || !M.length) return; const x = cur(), at = M[qi]; x.t = x.t.slice(0, at) + $("#ri").value + x.t.slice(at + Q.length); ta.value = x.t; show() },
+        rpa: () => { if (ta.readOnly || !M.length) return; const x = cur(), n = M.length, rv = $("#ri").value; x.t = x.t.replace(new RegExp(Q.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "gi"), () => rv); ta.value = x.t; show(); toast(`Replaced ${n}`) },
+        ovo: () => go("#/note/" + tid(S.tabs[i])),
+        nf: () => fSheet(-1, v === "mv"), fe: () => fSheet(i),
+        star: () => { t.s = !t.s; show(); toast(t.s ? "Bookmarked" : "Bookmark removed") },
+        om: () => go("#/" + { t: "tabs", g: "folders", s: "starred" }[v]), og: () => go(i >= 0 ? "#/folders/" + i : "#/tabs"),
+        swx: () => go("#/note/" + tid(cur())),
+        trn: () => { S.tabs[i].n = $("#rn").value.trim() || undefined; close(); afterTabs(); toast("Renamed") },
+        tstar: () => { const x = S.tabs[i]; x.s = !x.s; close(); afterTabs(); toast(x.s ? "Bookmarked" : "Bookmark removed") },
+        tmv: () => tmvS(i), tf: () => { S.tabs[i].f = +v; close(); afterTabs(); toast(`Moved to ${F[+v].n}`) },
+        tdup: () => { const x = S.tabs[i]; S.tabs.splice(i + 1, 0, { t: x.t, f: x.f, n: x.n && x.n + " copy" }); if (S.cur > i) S.cur++; close(); afterTabs(); toast("Duplicated") },
+        tcopy: () => { close(); (navigator.clipboard ? navigator.clipboard.writeText(S.tabs[i].t) : Promise.reject()).then(() => toast("Copied"), () => toast("Couldn’t copy")) },
+        tcl: () => closeT(i), tco: () => closeMany(i), tca: () => closeMany(-1),
+        pc: () => { SC = v; document.querySelectorAll(".swc").forEach(s => s.innerHTML = s.dataset.v === SC ? ic("chk", "size-[17px] stroke-[3]") : "") },
+        fsave: () => {
+          const n = $("#fn").value.trim() || "Untitled folder";
+          if (i >= 0) { F[i].n = n; F[i].c = SC }
+          else { F.push({ n, p: "Documents/" + n, ok: 1, c: SC }); if (v === "mv") t.f = F.length - 1 }
+          close(); render(); toast(i >= 0 ? "Folder updated" : "Folder created")
+        },
+        ovx: () => closeT(i),
+        mv: () => { if (!F[i].ok) return; t.f = i; close(); show(); toast(`Saved in ${F[i].n}`) }, nt: () => add(i),
+        top: () => { S.top = !S.top; applyTop(); keep() },
+        fs: () => { S.fs = Math.max(14, Math.min(24, S.fs + +b.dataset.d)); show(); setS() }, tg: () => { if (v === "wrap") S.wrap = S.wrap === false; else S.ln = !S.ln; show(); setS() }, th: () => { S.theme = v; theme(); keep(); setS() },
+        ren: () => { const n = $("#rn").value.trim(); t.n = n || undefined; close(); show(); toast(n ? "Renamed" : "Name follows the first line") },
+        del: () => { if (b.dataset.ok !== "1") { b.dataset.ok = "1"; b.textContent = "Tap again to confirm"; return } S.tabs.splice(S.cur, 1); if (!S.tabs.length) S.tabs.push({ t: "", f: 0 }); S.cur = Math.max(0, S.cur - 1); close(); show(true); toast("Moved to Trash") },
+        demo: () => { t.b = v; close(); show(true) }, onb: () => { close(); S.ob = 0; $("#ob").style.display = "flex" },
+        bn: () => { const r = BN[v](); if (r !== 1) t.b = null; show(true) },
+        obok: () => { S.ob = 1; $("#ob").style.display = "none"; keep(); ta.focus() }, obalt: () => toast("The system folder picker opens here")
+      };
+      if (A[a]) A[a]()
+    });
+    const vv = window.visualViewport; if (vv) { const f = () => { $("#app").style.height = vv.height + "px"; $("#tb").classList.toggle("hidden", innerHeight - vv.height > 150 && document.activeElement === ta) }; vv.addEventListener("resize", f); f() }
+    // long-press a tab (strip or switcher card) for its menu; in the strip, hold then drag to reorder
+    let LP = null, lpSup = false;
+    function startDrag() {
+      const st = $("#tabs"); LP.drag = true; LP.moved = false; LP.to = LP.i; LP.sl = st.scrollLeft;
+      LP.els = [...st.querySelectorAll(".tab")]; LP.rc = LP.els.map(e => [e.offsetLeft, e.offsetWidth]);
+      st.style.overflowX = "hidden"; LP.el.classList.add("z-10", "opacity-80"); navigator.vibrate && navigator.vibrate(12)
+    }
+    function moveDrag(e) {
+      const st = $("#tabs"), r = st.getBoundingClientRect();
+      if (e.clientX < r.left + 40) st.scrollLeft -= 8; else if (e.clientX > r.right - 40) st.scrollLeft += 8;
+      const dx = e.clientX - LP.x + st.scrollLeft - LP.sl, [l, w] = LP.rc[LP.i], c = l + w / 2 + dx, gap = 24;
+      if (Math.abs(dx) > 6) LP.moved = true;
+      let to = LP.i; LP.rc.forEach(([ql, qw], k) => { const m = ql + qw / 2; if (k < LP.i && c < m) to = Math.min(to, k); if (k > LP.i && c > m) to = Math.max(to, k) });
+      LP.to = to;
+      LP.els.forEach((el, k) => { el.style.transform = k === LP.i ? `translateX(${dx}px) scale(1.06)` : k >= to && k < LP.i ? `translateX(${w + gap}px)` : k <= to && k > LP.i ? `translateX(${-(w + gap)}px)` : "" })
+    }
+    function endDrag() {
+      $("#tabs").style.overflowX = ""; const { i, to, moved } = LP;
+      if (moved && to !== i) { const c = cur(), [x] = S.tabs.splice(i, 1); S.tabs.splice(to, 0, x); S.cur = S.tabs.indexOf(c) }
+      show(); if (!moved) tabS(i)
+    }
+    document.addEventListener("pointerdown", e => {
+      lpSup = false; const el = e.target.closest(".tab, .cd"); if (!el || e.target.closest(".x")) return;
+      LP = { el, x: e.clientX, y: e.clientY, i: +el.dataset.i, strip: el.classList.contains("tab"), on: false };
+      const me = LP; me.t = setTimeout(() => { me.on = true; lpSup = true; if (me.strip) startDrag(); else tabS(me.i) }, 450)
+    });
+    document.addEventListener("pointermove", e => {
+      if (!LP) return;
+      if (!LP.on) { if (Math.abs(e.clientX - LP.x) > 8 || Math.abs(e.clientY - LP.y) > 8) { clearTimeout(LP.t); LP = null } }
+      else if (LP.drag) moveDrag(e)
+    });
+    const lpUp = () => { if (!LP) return; clearTimeout(LP.t); if (LP.drag) endDrag(); LP = null };
+    document.addEventListener("pointerup", lpUp); document.addEventListener("pointercancel", lpUp);
+    document.addEventListener("touchmove", e => { if (LP && LP.drag) e.preventDefault() }, { passive: false });
+    document.addEventListener("contextmenu", e => { const el = e.target.closest(".tab, .cd"); if (!el) return; e.preventDefault(); if (!LP || !LP.on) tabS(+el.dataset.i) });
+    addEventListener("hashchange", render);
+    theme(); applyTop(); render(); if (!S.ob) $("#ob").style.display = "flex";
+  </script>
+</body>
+
+</html>
